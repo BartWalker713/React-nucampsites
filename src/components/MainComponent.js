@@ -16,7 +16,7 @@ const mapStateToProps = state => {
     partners: state.partners,
     promotions: state.promotions,
   };
-}
+};
 
 class Main extends Component {
 
@@ -30,7 +30,7 @@ class Main extends Component {
           partner={this.props.partners.filter(partner => partner.featured)[0]}
         />
       );
-    }
+    };
 
     const CampsiteWithId = ({match}) => {
       return (
