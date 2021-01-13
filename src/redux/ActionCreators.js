@@ -12,6 +12,7 @@ export const addComment = (campsiteId, rating, author, text) => ({
 })
 
 export const fetchCampsites = () => dispatch => {
+
     dispatch(campsitesLoading());
 
     setTimeout(() => {
@@ -20,15 +21,15 @@ export const fetchCampsites = () => dispatch => {
 };
 
 export const campsitesLoading = () => ({
-    type: CationTypes.CAMPSITES_LOADING
+    type: ActionTypes.CAMPSITES_LOADING
 });
 
 export const campsitesFailed = errMess => ({
-    type: CationTypes.CAMPSITES_FAILED,
+    type: ActionTypes.CAMPSITES_FAILED,
     payload: errMess
 });
 
 export const addCampsites = campsites => ({
-    type: CationTypes.ADD_CAMPSITES,
+    type: ActionTypes.ADD_CAMPSITES,
     payload: campsites
 });
