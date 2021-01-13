@@ -1,8 +1,117 @@
+import React, { Component } from 'react';
 import { render } from "@testing-library/react";
-import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem } from "reactstrap";
+import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem, Button, Label, Col, Row, Modal, ModalHeader, ModalBody, Form, FormGroup, Input } from "reactstrap";
 import { Link } from "react-router-dom";
+import { Control, LocalForm, Errors } from 'react-redux-form';
+import { Loading } from './LoadingComponent';
 
-function RenderCampsite({campsite}) {
+const required = val => val && val.length;
+const maxLength = len => val => !val || (val.length <= len);
+const minLength = len => val => val && (val.length >= len);
+
+
+
+class CommentForm extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            isModalOpen: false
+        };
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.toggleModal = this.toggleModal.bind(this);
+    }
+
+    toggleModal() {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        });
+    }
+
+    handleSubmit(values) {
+        this.toggleModal();
+        this.props.addComment(this.props.campsiteId, values.rating, values.author, values.text);
+
+    }
+
+    render() {
+        return (
+            <React.Fragment>
+                <Button className="fa fa-lg fa-pencil" outline onClick={this.toggleModal}>Submit Comment</Button>
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                    <ModalHeader toggle={this.toggleModal}>Comment</ModalHeader>
+                    <ModalBody>
+                            <LocalForm onSubmit={values => this.handleSubmit(values)}>
+                                <Label htmlFor="rating" md={2}>Rating</Label>
+                                <Control.select model=".rating" id="rating" name="rating"
+                                    placeholder="Type Here"
+                                    className="form-control"
+                                    validators={{
+                                        required,
+                                    }}>
+                                    <option value='1'>1</option>
+                                    <option value='2'>2</option>
+                                    <option value='3'>3</option>
+                                    <option value='4'>4</option>
+                                    <option value='5'>5</option>
+                                </Control.select>
+                                <Errors
+                                    className="text-danger"
+                                    model=".rting"
+                                    show="touched"
+                                    component="div"
+                                    messages={{
+                                        required: 'Required',
+                                    }}
+                                />
+                                <Label htmlFor="author" md={2}>Your Name</Label>
+                                <Control.text model=".author" id="author" name="fauthor"
+                                    placeholder="Type Here"
+                                    className="form-control"
+                                    validators={{
+                                        required,
+                                        minLength: minLength(2),
+                                        maxLength: maxLength(15)
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".author"
+                                    show="touched"
+                                    component="div"
+                                    messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be at least 2 characters',
+                                        maxLength: 'Must be 15 characters or less'
+                                    }}
+                                />
+                                <Label htmlFor="text" md={2}>Comment</Label>
+                                <Control.textarea model=".text" id="text" name="text" rows="6"
+                                    placeholder="Type Here"
+                                    className="form-control"
+                                    validators={{ required }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".text"
+                                    show="touched"
+                                    component="div"
+                                    messages={{
+                                        required: 'Required',
+                                    }}
+                                />
+                            
+                        <Button type="submit" value="submit" color="primary">Submit Comment</Button>
+                        </LocalForm>
+                    </ModalBody>
+                </Modal>
+            </React.Fragment>
+        )
+    }
+}
+
+function RenderCampsite({ campsite }) {
     return (
         <div className="col-md-5 m-1">
             <Card>
@@ -15,46 +124,71 @@ function RenderCampsite({campsite}) {
     )
 }
 
-    function RenderComments({comments}) {
-        if (comments) {
-            return (
-                <div className="col-md-5 m-1">
-                    <h4>Comments</h4>
-                    {comments.map(comment => <div key={comment.id}>{comment.text}<br />--{comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}<br/><br /></div>)}
-                </div>
-            )
-        }
+function RenderComments({ comments, addComment, campsiteId }) {
+    if (comments) {
         return (
-            <div></div>
+            <div className="col-md-5 m-1">
+                <h4>Comments</h4>
+                {comments.map(comment => <div key={comment.id}>{comment.text}<br />--{comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}<br /><br /></div>)}
+                <CommentForm campsiteId={campsiteId} addComment={addComment} />
+            </div>
         )
     }
+    return (
+        <div></div>
+    )
+}
 
-    function CampsiteInfo(props) {
-        if (props.campsite) {
-            return (
-                <div className="container">
-                    <div className="row">
-                        <div className="col">
-                            <Breadcrumb>
-                                <BreadcrumbItem><Link to="/directory">Directory</Link></BreadcrumbItem>
-                                <BreadcrumbItem active>{props.campsite.name}</BreadcrumbItem>
-                            </Breadcrumb>
-                            <h2>{props.campsite.name}</h2>
-                            <hr />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <RenderCampsite campsite={props.campsite} />
-                        <RenderComments comments={props.comments} />
+function CampsiteInfo(props) {
+    if (props.isLoading) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <Loading />
+                </div>
+            </div>
+        );
+    }
+    if (props.errMess) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <div className="col">
+                        <h4>{props.errMess}</h4>
                     </div>
                 </div>
-            )
-        }
-            return (
-                <div></div>
-            )
-    }    
-    
+            </div>
+        );
+    }
+    if (props.campsite) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <div className="col">
+                        <Breadcrumb>
+                            <BreadcrumbItem><Link to="/directory">Directory</Link></BreadcrumbItem>
+                            <BreadcrumbItem active>{props.campsite.name}</BreadcrumbItem>
+                        </Breadcrumb>
+                        <h2>{props.campsite.name}</h2>
+                        <hr />
+                    </div>
+                </div>
+                <div className="row">
+                    <RenderCampsite campsite={props.campsite} />
+                    <RenderComments 
+                        comments={props.comments} 
+                        addComment={props.addComment}
+                        campsiteId={props.campsite.id}
+                    />
+                </div>
+            </div>
+        );
+    }
+    return (
+        <div></div>
+    )
+}
+
 
 
 export default CampsiteInfo
