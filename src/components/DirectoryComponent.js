@@ -28,7 +28,7 @@ function Directory(props) {
         );
     });
 
-    if (props.campsite.isLoading) {
+    if (props.campsites.isLoading) {
         return (
             <div className="container">
                 <div className="row">

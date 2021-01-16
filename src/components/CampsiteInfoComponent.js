@@ -152,7 +152,7 @@ function RenderComments({ comments, postComment, campsiteId }) {
                     })
                     }
                 </Stagger>
-                {comments.map(comment => <div key={comment.id}>{comment.text}<br />--{comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}<br /><br /></div>)}
+                {/* {comments.map(comment => <div key={comment.id}>{comment.text}<br />--{comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}<br /><br /></div>)} */}
                 <CommentForm campsiteId={campsiteId} postComment={postComment} />
             </div>
         )
