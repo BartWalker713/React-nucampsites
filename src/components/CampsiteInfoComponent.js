@@ -4,6 +4,7 @@ import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle, Breadcrum
 import { Link } from "react-router-dom";
 import { Control, LocalForm, Errors } from 'react-redux-form';
 import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
 
 const required = val => val && val.length;
 const maxLength = len => val => !val || (val.length <= len);
@@ -42,67 +43,67 @@ class CommentForm extends Component {
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
                     <ModalHeader toggle={this.toggleModal}>Comment</ModalHeader>
                     <ModalBody>
-                            <LocalForm onSubmit={values => this.handleSubmit(values)}>
-                                <Label htmlFor="rating" md={2}>Rating</Label>
-                                <Control.select model=".rating" id="rating" name="rating"
-                                    placeholder="Type Here"
-                                    className="form-control"
-                                    validators={{
-                                        required,
-                                    }}>
-                                    <option value='1'>1</option>
-                                    <option value='2'>2</option>
-                                    <option value='3'>3</option>
-                                    <option value='4'>4</option>
-                                    <option value='5'>5</option>
-                                </Control.select>
-                                <Errors
-                                    className="text-danger"
-                                    model=".rting"
-                                    show="touched"
-                                    component="div"
-                                    messages={{
-                                        required: 'Required',
-                                    }}
-                                />
-                                <Label htmlFor="author" md={2}>Your Name</Label>
-                                <Control.text model=".author" id="author" name="fauthor"
-                                    placeholder="Type Here"
-                                    className="form-control"
-                                    validators={{
-                                        required,
-                                        minLength: minLength(2),
-                                        maxLength: maxLength(15)
-                                    }}
-                                />
-                                <Errors
-                                    className="text-danger"
-                                    model=".author"
-                                    show="touched"
-                                    component="div"
-                                    messages={{
-                                        required: 'Required',
-                                        minLength: 'Must be at least 2 characters',
-                                        maxLength: 'Must be 15 characters or less'
-                                    }}
-                                />
-                                <Label htmlFor="text" md={2}>Comment</Label>
-                                <Control.textarea model=".text" id="text" name="text" rows="6"
-                                    placeholder="Type Here"
-                                    className="form-control"
-                                    validators={{ required }}
-                                />
-                                <Errors
-                                    className="text-danger"
-                                    model=".text"
-                                    show="touched"
-                                    component="div"
-                                    messages={{
-                                        required: 'Required',
-                                    }}
-                                />
-                            
-                        <Button type="submit" value="submit" color="primary">Submit Comment</Button>
+                        <LocalForm onSubmit={values => this.handleSubmit(values)}>
+                            <Label htmlFor="rating" md={2}>Rating</Label>
+                            <Control.select model=".rating" id="rating" name="rating"
+                                placeholder="Type Here"
+                                className="form-control"
+                                validators={{
+                                    required,
+                                }}>
+                                <option value='1'>1</option>
+                                <option value='2'>2</option>
+                                <option value='3'>3</option>
+                                <option value='4'>4</option>
+                                <option value='5'>5</option>
+                            </Control.select>
+                            <Errors
+                                className="text-danger"
+                                model=".rting"
+                                show="touched"
+                                component="div"
+                                messages={{
+                                    required: 'Required',
+                                }}
+                            />
+                            <Label htmlFor="author" md={2}>Your Name</Label>
+                            <Control.text model=".author" id="author" name="fauthor"
+                                placeholder="Type Here"
+                                className="form-control"
+                                validators={{
+                                    required,
+                                    minLength: minLength(2),
+                                    maxLength: maxLength(15)
+                                }}
+                            />
+                            <Errors
+                                className="text-danger"
+                                model=".author"
+                                show="touched"
+                                component="div"
+                                messages={{
+                                    required: 'Required',
+                                    minLength: 'Must be at least 2 characters',
+                                    maxLength: 'Must be 15 characters or less'
+                                }}
+                            />
+                            <Label htmlFor="text" md={2}>Comment</Label>
+                            <Control.textarea model=".text" id="text" name="text" rows="6"
+                                placeholder="Type Here"
+                                className="form-control"
+                                validators={{ required }}
+                            />
+                            <Errors
+                                className="text-danger"
+                                model=".text"
+                                show="touched"
+                                component="div"
+                                messages={{
+                                    required: 'Required',
+                                }}
+                            />
+
+                            <Button type="submit" value="submit" color="primary">Submit Comment</Button>
                         </LocalForm>
                     </ModalBody>
                 </Modal>
@@ -115,7 +116,7 @@ function RenderCampsite({ campsite }) {
     return (
         <div className="col-md-5 m-1">
             <Card>
-                <CardImg top src={campsite.image} alt={campsite.name} />
+                <CardImg top src={baseUrl + campsite.image} alt={campsite.name} />
                 <CardBody>
                     <CardText>{campsite.description}</CardText>
                 </CardBody>
@@ -175,8 +176,8 @@ function CampsiteInfo(props) {
                 </div>
                 <div className="row">
                     <RenderCampsite campsite={props.campsite} />
-                    <RenderComments 
-                        comments={props.comments} 
+                    <RenderComments
+                        comments={props.comments}
                         addComment={props.addComment}
                         campsiteId={props.campsite.id}
                     />
